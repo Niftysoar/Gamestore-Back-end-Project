@@ -1,0 +1,159 @@
+/* 🌐 Structure de la page */
+body {
+  margin: 0;
+  font-family: "GT Walsheim Pro", Helvetica, sans-serif;
+  background-color: #e7eef1;
+}
+
+.page-connexion {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 🔝 Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #2D2D2D;
+    padding: 10px 48px;
+    height: 64px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-image {
+  width: 48px;
+  height: 48px;
+}
+
+.site-title {
+  color: white;
+  font-size: 20px;
+  margin: 0;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-signup {
+  background: url('../img/rectangle-13.svg') no-repeat center/cover;
+  color: white;
+  font-size: 14px;
+  border: none;
+  width: 92px;
+  height: 38px;
+  cursor: pointer;
+}
+
+.btn-login {
+  color: white;
+  font-size: 14px;
+}
+
+/* 🧾 Formulaire */
+.connexion-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.form-box {
+  background-color: white;
+  border-radius: 10px;
+  padding: 32px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-header h2 {
+  margin: 0 0 20px;
+  font-size: 20px;
+  color: #000;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #000;
+}
+
+.form-group input {
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.btn {
+    width: inherit;
+    padding: 0 20px;
+    height: 38px;
+    background-color: #426cff;
+    color: white;
+    font-size: 14px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.form-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-top: 15px;
+}
+
+.inscription-texte {
+    text-align: left;
+    font-size: 14px;
+    margin-top: 16px;
+    color: #000;
+}
+
+.lien-inscription {
+    color: #426cff;
+    text-decoration: underline;
+}
+
+/* 🔚 Footer */
+.footer {
+    background-color: #2d2d2d;
+    color: white;
+    text-align: center;
+    padding: 32px 20px;
+    font-size: 14px;
+}
+
+.footer p {
+    margin: 8px 0;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    margin: 0 6px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
