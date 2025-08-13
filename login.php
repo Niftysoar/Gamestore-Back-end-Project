@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GameStore - Connexion</title>
-    <link rel="icon" href="img/favicon.ico">
     <link rel="stylesheet" href="CSS/style.css" />
   </head>
   <body>
@@ -22,7 +21,7 @@
         </header>
 
       <!-- Formulaire de connexion -->
-      <main class="connexion-container">
+      <main class="form-container">
             <div class="form-box">
                 <div class="form-header">
                     <h2>Connexion</h2>
@@ -30,18 +29,18 @@
 
                 <form class="form-connexion" action="#" method="post">
                     <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" required />
+                      <label for="email">Email *</label>
+                      <input type="email" id="email" name="email" required />
                     </div>
 
                     <div class="form-group">
-                        <label for="password">Mot de passe *</label>
-                        <input type="password" id="password" name="password" required />
+                      <label for="password">Mot de passe *</label>
+                      <input type="password" id="password" name="password" required />
                     </div>
                 </form>
 
                 <div class="form-footer">
-                    <p class="inscription-texte">Nouveau ? <a href="signup.html" class="lien-inscription">Inscrivez-vous</a></p>
+                    <p class="form-footer-text">Nouveau ? <a href="register.php" class="lien-inscription"> Inscrivez-vous</a></p>
                     <button type="submit" class="btn">Connexion</button>
                 </div>
             </div>

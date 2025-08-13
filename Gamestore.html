@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Vault - Your Video Game Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .game-card {
+            transition: all 0.3s ease;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .platform-icon {
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 5px;
+        }
+        .status-completed {
+            border-left: 4px solid #10B981;
+        }
+        .status-playing {
+            border-left: 4px solid #3B82F6;
+        }
+        .status-backlog {
+            border-left: 4px solid #F59E0B;
+        }
+        .status-abandoned {
+            border-left: 4px solid #EF4444;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-10">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <i class="fas fa-gamepad text-4xl text-indigo-600 mr-3"></i>
+                    <h1 class="text-3xl font-bold text-gray-800">Game Vault</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="Search games..." 
+                               class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <button id="addGameBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full flex items-center">
+                        <i class="fas fa-plus mr-2"></i> Add Game
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats Section -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-lg shadow p-4 flex items-center">
+                <div class="bg-indigo-100 p-3 rounded-full mr-4">
+                    <i class="fas fa-gamepad text-indigo-600 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Total Games</p>
+                    <h3 id="totalGames" class="text-2xl font-bold">0</h3>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-4 flex items-center">
+                <div class="bg-green-100 p-3 rounded-full mr-4">
+                    <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Completed</p>
+                    <h3 id="completedGames" class="text-2xl font-bold">0</h3>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-4 flex items-center">
+                <div class="bg-blue-100 p-3 rounded-full mr-4">
+                    <i class="fas fa-play-circle text-blue-600 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Playing</p>
+                    <h3 id="playingGames" class="text-2xl font-bold">0</h3>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-4 flex items-center">
+                <div class="bg-yellow-100 p-3 rounded-full mr-4">
+                    <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-gray-500 text-sm">Backlog</p>
+                    <h3 id="backlogGames" class="text-2xl font-bold">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="mb-6 flex flex-wrap items-center gap-3">
+            <div class="flex items-center">
+                <label for="statusFilter" class="mr-2 text-gray-600">Status:</label>
+                <select id="statusFilter" class="rounded border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                    <option value="all">All</option>
+                    <option value="completed">Completed</option>
+                    <option value="playing">Currently Playing</option>
+                    <option value="backlog">Backlog</option>
+                    <option value="abandoned">Abandoned</option>
+                </select>
+            </div>
+            <div class="flex items-center">
+                <label for="platformFilter" class="mr-2 text-gray-600">Platform:</label>
+                <select id="platformFilter" class="rounded border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                    <option value="all">All</option>
+                    <option value="pc">PC</option>
+                    <option value="playstation">PlayStation</option>
+                    <option value="xbox">Xbox</option>
+                    <option value="nintendo">Nintendo</option>
+                    <option value="mobile">Mobile</option>
+                </select>
+            </div>
+            <div class="flex items-center">
+                <label for="sortBy" class="mr-2 text-gray-600">Sort by:</label>
+                <select id="sortBy" class="rounded border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
+                    <option value="name-asc">Name (A-Z)</option>
+                    <option value="name-desc">Name (Z-A)</option>
+                    <option value="rating-desc">Rating (High-Low)</option>
+                    <option value="rating-asc">Rating (Low-High)</option>
+                    <option value="date-desc">Recently Added</option>
+                    <option value="date-asc">Oldest Added</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Games Grid -->
+        <div id="gamesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Games will be added here dynamically -->
+            <div class="text-center py-10 text-gray-500" id="emptyState">
+                <i class="fas fa-gamepad text-5xl mb-4 text-gray-300"></i>
+                <h3 class="text-xl font-medium">Your collection is empty</h3>
+                <p class="mb-4">Add your first game to get started</p>
+                <button id="addFirstGameBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full">
+                    <i class="fas fa-plus mr-2"></i> Add Game
+                </button>
+            </div>
+        </div>
+
+        <!-- Add Game Modal -->
+        <div id="addGameModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center border-b px-6 py-4">
+                    <h3 class="text-xl font-semibold text-gray-800">Add New Game</h3>
+                    <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <form id="gameForm">
+                        <div class="mb-4">
+                            <label for="gameImage" class="block text-gray-700 mb-2">Game Cover Image</label>
+                            <div class="flex items-center">
+                                <input type="file" id="gameImage" accept="image/*" class="hidden">
+                                <label for="gameImage" class="cursor-pointer bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-l border border-r-0 border-gray-300">
+                                    <i class="fas fa-image mr-2"></i>Choose File
+                                </label>
+                                <div id="fileName" class="px-3 py-2 border border-gray-300 rounded-r text-sm text-gray-500 truncate flex-grow">No file chosen</div>
+                            </div>
+                            <div id="imagePreview" class="mt-2 hidden">
+                                <img id="previewImage" src="#" alt="Preview" class="max-h-40 rounded">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="gameTitle" class="block text-gray-700 mb-2">Game Title*</label>
+                            <input type="text" id="gameTitle" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="mb-4">
+                            <label for="gamePlatform" class="block text-gray-700 mb-2">Platform*</label>
+                            <select id="gamePlatform" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">Select Platform</option>
+                                <option value="pc">PC</option>
+                                <option value="playstation">PlayStation</option>
+                                <option value="xbox">Xbox</option>
+                                <option value="nintendo">Nintendo</option>
+                                <option value="mobile">Mobile</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="gameStatus" class="block text-gray-700 mb-2">Status*</label>
+                            <select id="gameStatus" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="">Select Status</option>
+                                <option value="completed">Completed</option>
+                                <option value="playing">Currently Playing</option>
+                                <option value="backlog">Backlog</option>
+                                <option value="abandoned">Abandoned</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="gameRating" class="block text-gray-700 mb-2">Your Rating (0-10)</label>
+                            <input type="number" id="gameRating" min="0" max="10" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="mb-4">
+                            <label for="gameHours" class="block text-gray-700 mb-2">Hours Played</label>
+                            <input type="number" id="gameHours" min="0" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div class="mb-4">
+                            <label for="gameNotes" class="block text-gray-700 mb-2">Notes</label>
+                            <textarea id="gameNotes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                        </div>
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" id="cancelGameBtn" class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Save Game</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Details Modal -->
+        <div id="gameDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center border-b px-6 py-4">
+                    <h3 id="detailGameTitle" class="text-xl font-semibold text-gray-800">Game Details</h3>
+                    <button id="closeDetailsModalBtn" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div id="detailPlatformIcon" class="platform-icon bg-gray-200 rounded-full mr-3">
+                            <i class="fas fa-question text-gray-600"></i>
+                        </div>
+                        <div>
+                            <p id="detailPlatform" class="text-gray-600">Platform</p>
+                            <p id="detailStatus" class="text-sm px-2 py-1 rounded-full inline-block bg-gray-100 text-gray-700">Status</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="text-gray-500 text-sm">Rating</p>
+                            <p id="detailRating" class="text-lg font-medium">-</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Hours Played</p>
+                            <p id="detailHours" class="text-lg font-medium">-</p>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-gray-500 text-sm mb-1">Notes</p>
+                        <p id="detailNotes" class="text-gray-700 bg-gray-50 p-3 rounded">No notes added</p>
+                    </div>
+                    <div class="flex justify-between pt-4 border-t">
+                        <button id="editGameBtn" class="text-indigo-600 hover:text-indigo-800 flex items-center">
+                            <i class="fas fa-edit mr-1"></i> Edit
+                        </button>
+                        <button id="deleteGameBtn" class="text-red-600 hover:text-red-800 flex items-center">
+                            <i class="fas fa-trash-alt mr-1"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game Collection App
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const gamesContainer = document.getElementById('gamesContainer');
+            const emptyState = document.getElementById('emptyState');
+            const addGameBtn = document.getElementById('addGameBtn');
+            const addFirstGameBtn = document.getElementById('addFirstGameBtn');
+            const addGameModal = document.getElementById('addGameModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const cancelGameBtn = document.getElementById('cancelGameBtn');
+            const gameForm = document.getElementById('gameForm');
+            const gameDetailsModal = document.getElementById('gameDetailsModal');
+            const closeDetailsModalBtn = document.getElementById('closeDetailsModalBtn');
+            const editGameBtn = document.getElementById('editGameBtn');
+            const deleteGameBtn = document.getElementById('deleteGameBtn');
+            const searchInput = document.getElementById('searchInput');
+            const statusFilter = document.getElementById('statusFilter');
+            const platformFilter = document.getElementById('platformFilter');
+            const sortBy = document.getElementById('sortBy');
+            
+            // Stats elements
+            const totalGamesEl = document.getElementById('totalGames');
+            const completedGamesEl = document.getElementById('completedGames');
+            const playingGamesEl = document.getElementById('playingGames');
+            const backlogGamesEl = document.getElementById('backlogGames');
+
+            // Game data
+            let games = JSON.parse(localStorage.getItem('games')) || [];
+            let currentGameId = null;
+            let isEditing = false;
+
+            // Initialize the app
+            init();
+
+            // Event Listeners
+            addGameBtn.addEventListener('click', openAddGameModal);
+            addFirstGameBtn.addEventListener('click', openAddGameModal);
+            closeModalBtn.addEventListener('click', closeAddGameModal);
+            cancelGameBtn.addEventListener('click', closeAddGameModal);
+            gameForm.addEventListener('submit', handleGameSubmit);
+            closeDetailsModalBtn.addEventListener('click', closeGameDetailsModal);
+            editGameBtn.addEventListener('click', openEditGameModal);
+            deleteGameBtn.addEventListener('click', deleteGame);
+            
+            // Filter and search events
+            searchInput.addEventListener('input', filterGames);
+            statusFilter.addEventListener('change', filterGames);
+            platformFilter.addEventListener('change', filterGames);
+            sortBy.addEventListener('change', filterGames);
+
+            // Image upload handling
+            const gameImageInput = document.getElementById('gameImage');
+            const fileNameDisplay = document.getElementById('fileName');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewImage = document.getElementById('previewImage');
+            
+            gameImageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    fileNameDisplay.textContent = file.name;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        previewImage.src = event.target.result;
+                        imagePreview.classList.remove('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    fileNameDisplay.textContent = 'No file chosen';
+                    imagePreview.classList.add('hidden');
+                }
+            });
+
+            // Functions
+            function init() {
+                updateStats();
+                filterGames();
+                
+                // Add some sample data if empty
+                if (games.length === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                }
+            }
+
+            function openAddGameModal() {
+                isEditing = false;
+                currentGameId = null;
+                gameForm.reset();
+                addGameModal.classList.remove('hidden');
+            }
+
+            function openEditGameModal() {
+                isEditing = true;
+                const game = games.find(g => g.id === currentGameId);
+                if (game) {
+                    document.getElementById('gameTitle').value = game.title;
+                    document.getElementById('gamePlatform').value = game.platform;
+                    document.getElementById('gameStatus').value = game.status;
+                    document.getElementById('gameRating').value = game.rating || '';
+                    document.getElementById('gameHours').value = game.hours || '';
+                    document.getElementById('gameNotes').value = game.notes || '';
+                    closeGameDetailsModal();
+                    addGameModal.classList.remove('hidden');
+                }
+            }
+
+            function closeAddGameModal() {
+                addGameModal.classList.add('hidden');
+            }
+
+            function openGameDetailsModal(gameId) {
+                currentGameId = gameId;
+                const game = games.find(g => g.id === gameId);
+                if (game) {
+                    document.getElementById('detailGameTitle').textContent = game.title;
+                    document.getElementById('detailPlatform').textContent = getPlatformName(game.platform);
+                    document.getElementById('detailStatus').textContent = getStatusName(game.status);
+                    document.getElementById('detailRating').textContent = game.rating ? `${game.rating}/10` : '-';
+                    document.getElementById('detailHours').textContent = game.hours ? `${game.hours} hours` : '-';
+                    document.getElementById('detailNotes').textContent = game.notes || 'No notes added';
+                    
+                    // Set platform icon
+                    const platformIcon = document.getElementById('detailPlatformIcon');
+                    platformIcon.innerHTML = '';
+                    const icon = document.createElement('i');
+                    icon.className = getPlatformIcon(game.platform);
+                    platformIcon.appendChild(icon);
+                    
+                    // Set status color
+                    const statusEl = document.getElementById('detailStatus');
+                    statusEl.className = 'text-sm px-2 py-1 rounded-full inline-block ' + getStatusClass(game.status);
+                    
+                    gameDetailsModal.classList.remove('hidden');
+                }
+            }
+
+            function closeGameDetailsModal() {
+                gameDetailsModal.classList.add('hidden');
+            }
+
+            function handleGameSubmit(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('gameTitle').value.trim();
+                const platform = document.getElementById('gamePlatform').value;
+                const status = document.getElementById('gameStatus').value;
+                const rating = document.getElementById('gameRating').value;
+                const hours = document.getElementById('gameHours').value;
+                const notes = document.getElementById('gameNotes').value.trim();
+                
+                if (!title || !platform || !status) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                let gameImage = null;
+                if (gameImageInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        gameImage = e.target.result;
+                        saveGameData();
+                    }
+                    reader.readAsDataURL(gameImageInput.files[0]);
+                } else {
+                    saveGameData();
+                }
+
+                function saveGameData() {
+                    const gameData = {
+                        title,
+                        platform,
+                        status,
+                        rating: rating ? parseInt(rating) : null,
+                        hours: hours ? parseInt(hours) : null,
+                        notes,
+                        image: gameImage,
+                        dateAdded: new Date().toISOString()
+                    };
+                    
+                    if (isEditing) {
+                        // Update existing game
+                        const index = games.findIndex(g => g.id === currentGameId);
+                        if (index !== -1) {
+                            gameData.id = currentGameId;
+                            // Preserve existing image if not uploading new one
+                            if (!gameImage && games[index].image) {
+                                gameData.image = games[index].image;
+                            }
+                            games[index] = gameData;
+                        }
+                    } else {
+                        // Add new game
+                        gameData.id = Date.now().toString();
+                        games.unshift(gameData);
+                    }
+                    
+                    saveGames();
+                    closeAddGameModal();
+                    filterGames();
+                    updateStats();
+                }
+                
+                if (isEditing) {
+                    // Update existing game
+                    const index = games.findIndex(g => g.id === currentGameId);
+                    if (index !== -1) {
+                        gameData.id = currentGameId;
+                        games[index] = gameData;
+                    }
+                } else {
+                    // Add new game
+                    gameData.id = Date.now().toString();
+                    games.unshift(gameData);
+                }
+                
+                saveGames();
+                closeAddGameModal();
+                filterGames();
+                updateStats();
+            }
+
+            function deleteGame() {
+                if (confirm('Are you sure you want to delete this game?')) {
+                    games = games.filter(g => g.id !== currentGameId);
+                    saveGames();
+                    closeGameDetailsModal();
+                    filterGames();
+                    updateStats();
+                }
+            }
+
+            function saveGames() {
+                localStorage.setItem('games', JSON.stringify(games));
+            }
+
+            function filterGames() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const statusFilterValue = statusFilter.value;
+                const platformFilterValue = platformFilter.value;
+                const sortByValue = sortBy.value;
+                
+                let filteredGames = [...games];
+                
+                // Apply filters
+                if (searchTerm) {
+                    filteredGames = filteredGames.filter(game => 
+                        game.title.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                if (statusFilterValue !== 'all') {
+                    filteredGames = filteredGames.filter(game => 
+                        game.status === statusFilterValue
+                    );
+                }
+                
+                if (platformFilterValue !== 'all') {
+                    filteredGames = filteredGames.filter(game => 
+                        game.platform === platformFilterValue
+                    );
+                }
+                
+                // Apply sorting
+                filteredGames.sort((a, b) => {
+                    switch (sortByValue) {
+                        case 'name-asc':
+                            return a.title.localeCompare(b.title);
+                        case 'name-desc':
+                            return b.title.localeCompare(a.title);
+                        case 'rating-desc':
+                            return (b.rating || 0) - (a.rating || 0);
+                        case 'rating-asc':
+                            return (a.rating || 0) - (b.rating || 0);
+                        case 'date-desc':
+                            return new Date(b.dateAdded) - new Date(a.dateAdded);
+                        case 'date-asc':
+                            return new Date(a.dateAdded) - new Date(b.dateAdded);
+                        default:
+                            return 0;
+                    }
+                });
+                
+                renderGames(filteredGames);
+            }
+
+            function renderGames(gamesToRender) {
+                gamesContainer.innerHTML = '';
+                
+                if (gamesToRender.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    return;
+                }
+                
+                emptyState.classList.add('hidden');
+                
+                gamesToRender.forEach(game => {
+                    const gameCard = document.createElement('div');
+                    gameCard.className = `game-card bg-white rounded-lg shadow overflow-hidden fade-in ${getStatusBorderClass(game.status)}`;
+                    gameCard.innerHTML = `
+                        ${game.image ? `<img src="${game.image}" alt="${game.title}" class="w-full h-40 object-cover">` : ''}
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-semibold text-lg text-gray-800 truncate">${game.title}</h3>
+                                ${game.rating ? `<span class="bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded">${game.rating}/10</span>` : ''}
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600 mb-3">
+                                <div class="platform-icon bg-gray-200 rounded-full mr-2">
+                                    <i class="${getPlatformIcon(game.platform)} text-gray-600"></i>
+                                </div>
+                                ${getPlatformName(game.platform)}
+                            </div>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="${getStatusClass(game.status)} px-2 py-1 rounded-full">${getStatusName(game.status)}</span>
+                                <div class="relative">
+                                    <button class="text-gray-400 hover:text-gray-600 dots-btn" data-id="${game.id}">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div class="absolute right-0 mt-1 w-32 bg-white rounded-md shadow-lg py-1 z-10 hidden dropdown-menu">
+                                        <button class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 edit-btn">Edit</button>
+                                        <button class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 delete-btn">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 flex justify-between items-center text-sm">
+                            ${game.hours ? `<span class="text-gray-500"><i class="fas fa-clock mr-1"></i>${game.hours}h</span>` : '<span></span>'}
+                            <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium view-details-btn" data-id="${game.id}">
+                                Details <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+                    `;
+                    gamesContainer.appendChild(gameCard);
+                });
+                
+                // Add event listeners to view details buttons
+                document.querySelectorAll('.view-details-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        openGameDetailsModal(e.target.closest('button').dataset.id);
+                    });
+                });
+
+                // Add event listeners to dots buttons
+                document.querySelectorAll('.dots-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const dropdown = e.target.closest('.relative').querySelector('.dropdown-menu');
+                        
+                        // Close all other open dropdowns
+                        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                            if (menu !== dropdown) menu.classList.add('hidden');
+                        });
+                        
+                        dropdown.classList.toggle('hidden');
+                    });
+                });
+
+                // Add event listeners to dropdown options
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const card = e.target.closest('.game-card');
+                        const id = card.querySelector('.dots-btn').dataset.id;
+                        currentGameId = id;
+                        openEditGameModal();
+                        card.querySelector('.dropdown-menu').classList.add('hidden');
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const card = e.target.closest('.game-card');
+                        const id = card.querySelector('.dots-btn').dataset.id;
+                        currentGameId = id;
+                        deleteGame();
+                        card.querySelector('.dropdown-menu').classList.add('hidden');
+                    });
+                });
+
+                // Close dropdowns when clicking elsewhere
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.relative')) {
+                        document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                            menu.classList.add('hidden');
+                        });
+                    }
+                });
+            }
+
+            function updateStats() {
+                totalGamesEl.textContent = games.length;
+                completedGamesEl.textContent = games.filter(g => g.status === 'completed').length;
+                playingGamesEl.textContent = games.filter(g => g.status === 'playing').length;
+                backlogGamesEl.textContent = games.filter(g => g.status === 'backlog').length;
+            }
+
+            // Helper functions
+            function getPlatformIcon(platform) {
+                switch (platform) {
+                    case 'pc': return 'fab fa-windows';
+                    case 'playstation': return 'fab fa-playstation';
+                    case 'xbox': return 'fab fa-xbox';
+                    case 'nintendo': return 'fas fa-gamepad';
+                    case 'mobile': return 'fas fa-mobile-alt';
+                    default: return 'fas fa-question';
+                }
+            }
+
+            function getPlatformName(platform) {
+                switch (platform) {
+                    case 'pc': return 'PC';
+                    case 'playstation': return 'PlayStation';
+                    case 'xbox': return 'Xbox';
+                    case 'nintendo': return 'Nintendo';
+                    case 'mobile': return 'Mobile';
+                    default: return 'Unknown';
+                }
+            }
+
+            function getStatusName(status) {
+                switch (status) {
+                    case 'completed': return 'Completed';
+                    case 'playing': return 'Playing';
+                    case 'backlog': return 'Backlog';
+                    case 'abandoned': return 'Abandoned';
+                    default: return 'Unknown';
+                }
+            }
+
+            function getStatusClass(status) {
+                switch (status) {
+                    case 'completed': return 'bg-green-100 text-green-800';
+                    case 'playing': return 'bg-blue-100 text-blue-800';
+                    case 'backlog': return 'bg-yellow-100 text-yellow-800';
+                    case 'abandoned': return 'bg-red-100 text-red-800';
+                    default: return 'bg-gray-100 text-gray-800';
+                }
+            }
+
+            function getStatusBorderClass(status) {
+                switch (status) {
+                    case 'completed': return 'status-completed';
+                    case 'playing': return 'status-playing';
+                    case 'backlog': return 'status-backlog';
+                    case 'abandoned': return 'status-abandoned';
+                    default: return '';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

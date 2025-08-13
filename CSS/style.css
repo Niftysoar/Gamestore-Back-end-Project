@@ -1,14 +1,20 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 /* 🌐 Structure de la page */
 body {
-  margin: 0;
   font-family: "GT Walsheim Pro", Helvetica, sans-serif;
   background-color: #e7eef1;
+  min-height: 100vh;
 }
 
 .page-connexion {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 /* 🔝 Header */
@@ -17,41 +23,40 @@ body {
     align-items: center;
     justify-content: space-between;
     background-color: #2D2D2D;
-    padding: 10px 48px;
-    height: 64px;
+    padding: 20px 48px;
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .logo-image {
-  width: 48px;
-  height: 48px;
+    width: 48px;
+    height: 48px;
 }
 
 .site-title {
-  color: white;
-  font-size: 20px;
-  margin: 0;
+    color: white;
+    font-size: 20px;
+    margin: 0;
 }
 
 .navigation {
-  display: flex;
-  align-items: center;
-  gap: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 .btn-signup {
-  background: url('../img/rectangle-13.svg') no-repeat center/cover;
-  color: white;
-  font-size: 14px;
-  border: none;
-  width: 92px;
-  height: 38px;
-  cursor: pointer;
+    background: url('../img/rectangle-13.svg') no-repeat center/cover;
+    color: white;
+    font-size: 14px;
+    border: none;
+    width: 92px;
+    height: 38px;
+    cursor: pointer;
 }
 
 .btn-login {
@@ -60,12 +65,12 @@ body {
 }
 
 /* 🧾 Formulaire */
-.connexion-container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 20px;
+.form-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10% 20px;
 }
 
 .form-box {
@@ -78,9 +83,8 @@ body {
 }
 
 .form-header h2 {
-  margin: 0 0 20px;
+  margin-bottom: 20px;
   font-size: 20px;
-  color: #000;
 }
 
 .form-group {
@@ -88,18 +92,17 @@ body {
 }
 
 .form-group label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 6px;
-  color: #000;
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
 }
 
 .form-group input {
-  width: 100%;
-  height: 40px;
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
 }
 
 .btn {
@@ -123,7 +126,7 @@ body {
     margin-top: 15px;
 }
 
-.inscription-texte {
+.form-footer-text {
     text-align: left;
     font-size: 14px;
     margin-top: 16px;
@@ -140,7 +143,7 @@ body {
     background-color: #2d2d2d;
     color: white;
     text-align: center;
-    padding: 32px 20px;
+    padding: 48px 20px;
     font-size: 14px;
 }
 
