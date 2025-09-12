@@ -1,51 +1,46 @@
 <?php
+include './Config/db.php'; // ton fichier PDO (connexion SQL)
 
-include 'config.php';
+$message = ""; // variable pour afficher le feedback à l’utilisateur
 
-if(isset($_POST['submit'])){
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['submit'])) {
 
-   $name = $_POST['name'];
-   $name = filter_var($name, FILTER_SANITIZE_STRING);
-   $email = $_POST['email'];
-   $email = filter_var($email, FILTER_SANITIZE_STRING);
-   $pass = md5($_POST['pass']);
-   $pass = filter_var($pass, FILTER_SANITIZE_STRING);
-   $cpass = md5($_POST['cpass']);
-   $cpass = filter_var($cpass, FILTER_SANITIZE_STRING);
+    // Sécurisation des données
+    $name     = isset($_POST['name']) ? trim($_POST['name']) : null;
+    $email    = isset($_POST['email']) ? trim($_POST['email']) : null;
+    $password = isset($_POST['password']) ? $_POST['password'] : null;
 
-   $image = $_FILES['image']['name'];
-   $image = filter_var($image, FILTER_SANITIZE_STRING);
-   $image_size = $_FILES['image']['size'];
-   $image_tmp_name = $_FILES['image']['tmp_name'];
-   $image_folder = 'uploaded_img/'.$image;
+    if (!$name || !$email || !$password) {
+        $message = "⚠️ Tous les champs sont obligatoires.";
+    } else {
+        try {
+            // Vérifier si l’email existe déjà
+            $check = $pdo->prepare("SELECT id FROM users WHERE email = :email");
+            $check->execute([":email" => $email]);
 
-   $select = $conn->prepare("SELECT * FROM `users` WHERE email = ?");
-   $select->execute([$email]);
+            if ($check->rowCount() > 0) {
+                $message = "⚠️ Cet email est déjà utilisé.";
+            } else {
+                // Hachage sécurisé du mot de passe
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-   if($select->rowCount() > 0){
-      $message[] = 'user email already exist!';
-   }else{
-      if($pass != $cpass){
-         $message[] = 'confirm password not matched!';
-      }else{
-         $insert = $conn->prepare("INSERT INTO `users`(name, email, password, image) VALUES(?,?,?,?)");
-         $insert->execute([$name, $email, $pass, $image]);
+                // Insérer l’utilisateur
+                $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
+                $stmt->execute([
+                    ":name"     => $name,
+                    ":email"    => $email,
+                    ":password" => $hashedPassword
+                ]);
 
-         if($insert){
-            if($image_size > 2000000){
-               $message[] = 'image size is too large!';
-            }else{
-               move_uploaded_file($image_tmp_name, $image_folder);
-               $message[] = 'registered successfully!';
-               header('location:login.php');
+                $message = "✅ Inscription réussie ! Vous pouvez vous connecter.";
+                header("Location: login.php");
+                exit;
             }
-         }
-
-      }
-   }
-
+        } catch (PDOException $e) {
+            $message = "❌ Erreur SQL : " . $e->getMessage();
+        }
+    }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -64,7 +59,7 @@ if(isset($_POST['submit'])){
   <body>
     <div class="connexion">
         <!-- Header -->
-        <header class="header">
+        <!-- <header class="header">
             <div class="logo">
             <img src="img/Logo.png" alt="Logo GameStore" class="logo-image" />
             <h1 class="site-title">GameStore</h1>
@@ -73,41 +68,48 @@ if(isset($_POST['submit'])){
             <button class="btn-signup">S’inscrire</button>
             <span class="btn-login">Se connecter</span>
             </nav>
-        </header>
+        </header> -->
 
       <!-- Formulaire de connexion -->
-      <main class="form-container">
-            <div class="form-box">
-                <div class="form-header">
-                    <h2>S’inscrire</h2>
+    <main class="form-container">
+        <div class="form-box">
+            <div class="form-header">
+                <h2>S’inscrire</h2>
+            </div>
+
+            <!-- Affichage des messages -->
+            <?php if (!empty($message)) : ?>
+                <p style="color: red;"><?= $message ?></p>
+            <?php endif; ?>
+
+            <form class="form-connexion" action="/src/register.php" method="post">
+                <div class="form-group">
+                    <label for="name">Nom d’utilisateur *</label>
+                    <input type="text" id="name" name="name" required />
                 </div>
 
-                <form class="form-connexion" action="#" method="post">
-                    <div class="form-group">
-                      <label for="email">Email *</label>
-                      <input type="email" id="email" name="email" required />
-                    </div>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required />
+                </div>
 
-                    <div class="form-group">
-                        <label for="email">Nom d’utilisateur *</label>
-                        <input type="email" id="email" name="email" required />
-                    </div>
-
-                    <div class="form-group">
-                      <label for="password">Mot de passe *</label>
-                      <input type="password" id="password" name="password" required />
-                    </div>
-                </form>
+                <div class="form-group">
+                    <label for="password">Mot de passe *</label>
+                    <input type="password" id="password" name="password" required />
+                </div>
 
                 <div class="form-footer">
-                    <p class="form-footer-text">Deja un compte ? <a href="login.php" class="lien-inscription">Connectez-vous</a></p>
-                    <button type="submit" class="btn">S’inscrire</button>
+                    <p class="form-footer-text">
+                        Déjà un compte ? <a href="login.php" class="lien-inscription">Connectez-vous</a>
+                    </p>
+                    <button type="submit" name="submit" class="btn">S’inscrire</button>
                 </div>
-            </div>
-      </main>
+            </form>
+        </div>
+    </main>
 
       <!-- Footer -->
-      <footer class="footer">
+      <!-- <footer class="footer">
             <nav class="footer-links">
                 <a href="#">Contact</a> |
                 <a href="#">Conditions d’utilisation</a> |
@@ -116,7 +118,7 @@ if(isset($_POST['submit'])){
             </nav>
 
             <p>© 2025 GameStore, Tous droits réservés</p>
-      </footer>
+      </footer> -->
     </div>
   </body>
 </html>
