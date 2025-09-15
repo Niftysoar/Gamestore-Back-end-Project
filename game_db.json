@@ -1,7 +1,7 @@
 {
-  "_id": ObjectId("64bfcdf51cf2fd2d9a836ab3"),
-  "email": "player1@example.com",
-  "passwordHash": "$2b$10$ABCDEFGHIJKLMOPQRSTUVWXYZ",  // hashé avec bcrypt
-  "username": "playerOne",
-  "createdAt": ISODate("2025-07-13T10:30:00Z"),
+  "_id": ObjectId("..."),
+  "title": "Zelda",
+  "genre": "Action-RPG",
+  "platform": "Switch",
+  "user_id": 42   // référence vers l'id du user SQL
 }

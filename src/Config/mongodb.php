@@ -1,13 +1,23 @@
 <?php
-require '../vendor/autoload.php'; // charge MongoDB\Client
+declare(strict_types=1);
 
-try {
-    // Connexion au serveur MongoDB (par défaut en local)
-    $client = new MongoDB\Client("mongodb://localhost:27017");
+require_once '.././vendor/autoload.php';
 
-    // Sélectionne la base de données GameStore
-    $db = $client->GameStore;
+use MongoDB\Client;
+use MongoDB\Database;
 
-} catch (Exception $e) {
-    die("Erreur de connexion MongoDB : " . $e->getMessage());
+function mongo_db(): Database {
+    static $db = null;
+    if ($db instanceof Database) {
+        return $db;
+    }
+
+    // 🔑 Utilise vos variables d’environnement si définies
+    $uri    = getenv('MONGODB_URI');
+    $dbName = getenv('MONGODB_DB');
+
+    $client = new Client($uri);
+    $db     = $client->selectDatabase($dbName);
+
+    return $db;
 }

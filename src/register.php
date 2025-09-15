@@ -1,44 +1,26 @@
 <?php
-include './Config/db.php'; // ton fichier PDO (connexion SQL)
+include './Config/db.php';
+require_once './Classes/User.php';
 
-$message = ""; // variable pour afficher le feedback à l’utilisateur
+$message = "";
 
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['submit'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = trim($_POST['name'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    // Sécurisation des données
-    $name     = isset($_POST['name']) ? trim($_POST['name']) : null;
-    $email    = isset($_POST['email']) ? trim($_POST['email']) : null;
-    $password = isset($_POST['password']) ? $_POST['password'] : null;
+    if ($name !== '' && $email !== '' && $password !== '') {
+        $userObj = new User($pdo);
 
-    if (!$name || !$email || !$password) {
-        $message = "⚠️ Tous les champs sont obligatoires.";
-    } else {
-        try {
-            // Vérifier si l’email existe déjà
-            $check = $pdo->prepare("SELECT id FROM users WHERE email = :email");
-            $check->execute([":email" => $email]);
-
-            if ($check->rowCount() > 0) {
-                $message = "⚠️ Cet email est déjà utilisé.";
-            } else {
-                // Hachage sécurisé du mot de passe
-                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-                // Insérer l’utilisateur
-                $stmt = $pdo->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
-                $stmt->execute([
-                    ":name"     => $name,
-                    ":email"    => $email,
-                    ":password" => $hashedPassword
-                ]);
-
-                $message = "✅ Inscription réussie ! Vous pouvez vous connecter.";
-                header("Location: login.php");
-                exit;
-            }
-        } catch (PDOException $e) {
-            $message = "❌ Erreur SQL : " . $e->getMessage();
+        if ($userObj->register($name, $email, $password)) {
+            $_SESSION['success'] = "✅ Compte créé avec succès, vous pouvez vous connecter.";
+            header("Location: login.php");
+            exit;
+        } else {
+            $message = "⚠️ Cet email est déjà utilisé.";
         }
+    } else {
+        $message = "❌ Tous les champs sont obligatoires.";
     }
 }
 ?>
@@ -57,20 +39,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['submit'])) {
     <link rel="stylesheet" href="CSS/style.css" />
   </head>
   <body>
-    <div class="connexion">
-        <!-- Header -->
-        <!-- <header class="header">
-            <div class="logo">
-            <img src="img/Logo.png" alt="Logo GameStore" class="logo-image" />
-            <h1 class="site-title">GameStore</h1>
-            </div>
-            <nav class="navigation">
-            <button class="btn-signup">S’inscrire</button>
-            <span class="btn-login">Se connecter</span>
-            </nav>
-        </header> -->
 
-      <!-- Formulaire de connexion -->
+    <?php include 'header.php'; ?>
+
+    <!-- Formulaire de connexion -->
     <main class="form-container">
         <div class="form-box">
             <div class="form-header">
@@ -107,18 +79,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['submit'])) {
             </form>
         </div>
     </main>
-
-      <!-- Footer -->
-      <!-- <footer class="footer">
-            <nav class="footer-links">
-                <a href="#">Contact</a> |
-                <a href="#">Conditions d’utilisation</a> |
-                <a href="#">Politique de confidentialité</a> |
-                <a href="#">Retour</a>
-            </nav>
-
-            <p>© 2025 GameStore, Tous droits réservés</p>
-      </footer> -->
-    </div>
+    <?php include 'footer.php'; ?>
   </body>
 </html>

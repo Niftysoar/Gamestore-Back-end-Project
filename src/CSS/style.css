@@ -160,3 +160,44 @@ body {
 .footer-links a:hover {
     text-decoration: underline;
 }
+
+
+
+
+
+
+
+.game-card {
+    transition: all 0.3s ease;
+}
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+.platform-icon {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+}
+.status-completed {
+    border-left: 4px solid #10B981;
+}
+.status-playing {
+    border-left: 4px solid #3B82F6;
+}
+.status-backlog {
+    border-left: 4px solid #F59E0B;
+}
+.status-abandoned {
+    border-left: 4px solid #EF4444;
+}
+.fade-in {
+    animation: fadeIn 0.5s;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
