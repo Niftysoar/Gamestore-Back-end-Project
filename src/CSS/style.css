@@ -18,14 +18,6 @@ body {
 }
 
 /* 🔝 Header */
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #2D2D2D;
-    padding: 20px 48px;
-}
-
 .logo {
     display: flex;
     align-items: center;
@@ -35,33 +27,7 @@ body {
 .logo-image {
     width: 48px;
     height: 48px;
-}
-
-.site-title {
-    color: white;
-    font-size: 20px;
-    margin: 0;
-}
-
-.navigation {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.btn-signup {
-    background: url('../img/rectangle-13.svg') no-repeat center/cover;
-    color: white;
-    font-size: 14px;
-    border: none;
-    width: 92px;
-    height: 38px;
-    cursor: pointer;
-}
-
-.btn-login {
-  color: white;
-  font-size: 14px;
+    margin-right: 1rem;
 }
 
 /* 🧾 Formulaire */
@@ -138,31 +104,6 @@ body {
     text-decoration: underline;
 }
 
-/* 🔚 Footer */
-.footer {
-    background-color: #2d2d2d;
-    color: white;
-    text-align: center;
-    padding: 48px 20px;
-    font-size: 14px;
-}
-
-.footer p {
-    margin: 8px 0;
-}
-
-.footer-links a {
-    color: white;
-    text-decoration: none;
-    margin: 0 6px;
-}
-
-.footer-links a:hover {
-    text-decoration: underline;
-}
-
-
-
 
 
 
@@ -173,14 +114,6 @@ body {
 .game-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-.platform-icon {
-    width: 24px;
-    height: 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 5px;
 }
 .status-completed {
     border-left: 4px solid #10B981;

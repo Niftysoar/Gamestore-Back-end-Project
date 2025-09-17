@@ -7,3 +7,4 @@ CREATE TABLE users (
 );
 
 INSERT INTO users VALUES (1, 'Niftysoar', 'berthomath@hotmail.com', '$2y$10$zbUe6EB3GpvODEUeMSHGjO8Hja9GjqxKvZuAaPocusrr4yr4bmZLi', '2024-11-07 10:00:00');
+INSERT INTO users VALUES (2, 'Noémie', 'Gabano@hotmail.com', '$2y$10$zbUe6EB3GpvODEUeMSHGjO8Hja9GjqxKvZuAaPocusrr4yr4bmZLi', '2024-11-07 10:00:00');
