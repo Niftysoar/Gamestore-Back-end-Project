@@ -4,17 +4,9 @@
     box-sizing: border-box;
 }
 
-/* 🌐 Structure de la page */
+/* Structure de la page */
 body {
-  font-family: "GT Walsheim Pro", Helvetica, sans-serif;
-  background-color: #e7eef1;
-  min-height: 100vh;
-}
-
-.page-connexion {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    font-family: "GT Walsheim Pro", Helvetica, sans-serif;
 }
 
 /* 🔝 Header */
@@ -33,80 +25,8 @@ body {
 /* 🧾 Formulaire */
 .form-container {
     flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     padding: 10% 20px;
 }
-
-.form-box {
-  background-color: white;
-  border-radius: 10px;
-  padding: 32px;
-  width: 100%;
-  max-width: 450px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.form-header h2 {
-  margin-bottom: 20px;
-  font-size: 20px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    font-size: 14px;
-    margin-bottom: 6px;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-    font-size: 14px;
-}
-
-.btn {
-    width: inherit;
-    padding: 0 20px;
-    height: 38px;
-    background-color: #426cff;
-    color: white;
-    font-size: 14px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-.form-footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 30px;
-    margin-top: 15px;
-}
-
-.form-footer-text {
-    text-align: left;
-    font-size: 14px;
-    margin-top: 16px;
-    color: #000;
-}
-
-.lien-inscription {
-    color: #426cff;
-    text-decoration: underline;
-}
-
-
-
-
 
 .game-card {
     transition: all 0.3s ease;
@@ -119,9 +39,6 @@ body {
     border-left: 4px solid #10B981;
 }
 .status-playing {
-    border-left: 4px solid #3B82F6;
-}
-.status-backlog {
     border-left: 4px solid #F59E0B;
 }
 .status-abandoned {

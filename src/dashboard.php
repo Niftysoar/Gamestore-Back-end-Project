@@ -122,7 +122,7 @@ $games = $gamesClass->getGamesByUser($userId);
         <div id="gamesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <?php if (!empty($games)) : ?>
                 <?php foreach ($games as $game) : ?>
-                    <div class="game-card bg-white rounded-lg shadow overflow-hidden fade-in status-completed">
+                    <div class="game-card bg-white rounded-lg shadow overflow-hidden fade-in status-<?= htmlspecialchars($game['status']) ?>">
                         <img src="uploaded_img/<?= htmlspecialchars($game['image']) ?>" alt="<?= htmlspecialchars($game['title']) ?>" class="w-full h-40 object-cover">
                         <div class="p-4">
                             <div class="flex justify-between items-start mb-2">
@@ -234,31 +234,31 @@ $games = $gamesClass->getGamesByUser($userId);
                         <div id="detailPlatformIcon" class="platform-icon bg-gray-200 rounded-full mr-3">
                             <i class="fas fa-question text-gray-600"></i>
                         </div>
-                        <div>
-                            <p id="detailPlatform" class="text-gray-600">Platform</p>
-                            <p id="detailStatus" class="text-sm px-2 py-1 rounded-full inline-block bg-gray-100 text-gray-700">Status</p>
+                        <div> 
+                            <p id="detailPlatform" class="text-gray-600">Platforme</p>
+                            <p id="detailStatus" class="text-sm px-2 py-1 rounded-full inline-block bg-gray-100 text-gray-700">Statut</p>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                            <p class="text-gray-500 text-sm">Rating</p>
+                            <p class="text-gray-500 text-sm">Note</p>
                             <p id="detailRating" class="text-lg font-medium">-</p>
                         </div>
                         <div>
-                            <p class="text-gray-500 text-sm">Hours Played</p>
+                            <p class="text-gray-500 text-sm">Heure(s) joués</p>
                             <p id="detailHours" class="text-lg font-medium">-</p>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <p class="text-gray-500 text-sm mb-1">Notes</p>
-                        <p id="detailNotes" class="text-gray-700 bg-gray-50 p-3 rounded">No notes added</p>
+                        <p class="text-gray-500 text-sm mb-1">Commentaire</p>
+                        <p id="detailNotes" class="text-gray-700 bg-gray-50 p-3 rounded">Aucunes commentaire ajouté</p>
                     </div>
                     <div class="flex justify-between pt-4 border-t">
                         <button id="editGameBtn" class="text-indigo-600 hover:text-indigo-800 flex items-center">
-                            <i class="fas fa-edit mr-1"></i> Edit
+                            <i class="fas fa-edit mr-1"></i> Editer
                         </button>
                         <button id="deleteGameBtn" class="text-red-600 hover:text-red-800 flex items-center">
-                            <i class="fas fa-trash-alt mr-1"></i> Delete
+                            <i class="fas fa-trash-alt mr-1"></i> Supprimer
                         </button>
                     </div>
                 </div>
@@ -304,6 +304,32 @@ $games = $gamesClass->getGamesByUser($userId);
                 fileNameDisplay.textContent = 'No file chosen';
                 imagePreview.classList.add('hidden');
             }
+        });
+
+        const detailsModal = document.getElementById("gameDetailsModal");
+        const closeDetailsBtn = document.getElementById("closeDetailsModalBtn");
+
+        // Quand on clique sur un bouton "Détails"
+        document.querySelectorAll(".view-details-btn").forEach(button => {
+            button.addEventListener("click", () => {
+                const gameId = button.getAttribute("data-id");
+                
+                // Exemple basique pour affichage statique :
+                document.getElementById("detailGameTitle").textContent = "<?= htmlspecialchars($game['title']) ?>";
+                document.getElementById("detailPlatform").textContent = "<?= htmlspecialchars($game['platform']) ?>";
+                document.getElementById("detailStatus").textContent = "<?= htmlspecialchars($game['status']) ?>";
+                document.getElementById("detailRating").textContent = "<?= htmlspecialchars($game['rating']) ?>";
+                document.getElementById("detailHours").textContent = "<?= htmlspecialchars($game['hours_played']) ?>";
+                document.getElementById("detailNotes").textContent = "Très bon jeu.";
+
+                // Ouvrir le modal
+                detailsModal.classList.remove("hidden");
+            });
+        });
+
+        // Fermer le modal
+        closeDetailsBtn.addEventListener("click", () => {
+            detailsModal.classList.add("hidden");
         });
     </script>
 

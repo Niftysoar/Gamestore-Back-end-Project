@@ -36,15 +36,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="CSS/style.css" />
   </head>
-  <body>
+  <body class="bg-gray-100 min-h-screen">
 
     <?php include 'header.php'; ?>
 
     <!-- Formulaire de connexion -->
-    <main class="form-container">
-        <div class="form-box">
-            <div class="form-header">
-                <h2>S’inscrire</h2>
+    <main class="form-container flex justify-center items-center">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="border-b px-6 py-4">
+                <h3 class="text-xl font-semibold text-gray-800">S’inscrire</h3>
             </div>
 
             <!-- Affichage des messages -->
@@ -52,29 +52,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p style="color: red;"><?= $message ?></p>
             <?php endif; ?>
 
-            <form class="form-connexion" action="/src/register.php" method="post">
-                <div class="form-group">
-                    <label for="name">Nom d’utilisateur *</label>
-                    <input type="text" id="name" name="name" required />
-                </div>
+            <div class="p-6">
+                <form class="form-connexion" action="/src/register.php" method="post">
+                    <div class="mb-4">
+                        <label for="name" class="block text-gray-700 mb-2">Nom d’utilisateur *</label>
+                        <input type="text" id="name" name="name" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+                    </div>
 
-                <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" required />
-                </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700 mb-2">Email *</label>
+                        <input type="email" id="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+                    </div>
 
-                <div class="form-group">
-                    <label for="password">Mot de passe *</label>
-                    <input type="password" id="password" name="password" required />
-                </div>
+                    <div class="mb-4">
+                        <label for="password" class="block text-gray-700 mb-2">Mot de passe *</label>
+                        <input type="password" id="password" name="password" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+                    </div>
 
-                <div class="form-footer">
-                    <p class="form-footer-text">
-                        Déjà un compte ? <a href="login.php" class="lien-inscription">Connectez-vous</a>
-                    </p>
-                    <button type="submit" name="submit" class="btn">S’inscrire</button>
-                </div>
-            </form>
+                    <div class="flex justify-center items-center mt-4 gap-7">
+                        <p class="text-left text-sm mt-4 text-black">
+                            Déjà un compte ? <a href="login.php" class="text-indigo-600 underline">Connectez-vous</a>
+                        </p>
+                        <button type="submit" name="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">Inscription</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </main>
     <?php include 'footer.php'; ?>
