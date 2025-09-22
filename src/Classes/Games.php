@@ -33,7 +33,48 @@ class Games {
     }
 
     // Supprimer un jeu
-    public function deleteGame($gameId) {
-        return $this->collection->deleteOne(["_id" => new MongoDB\BSON\ObjectId($gameId)]);
+    public function deleteGame($id) {
+        try {
+            $result = $this->collection->deleteOne(
+                ['_id' => new MongoDB\BSON\ObjectId($id)]
+            );
+            return $result->getDeletedCount() > 0;
+        } catch (Exception $e) {
+            return false;
+        }
     }
+
+    // Compter les jeux
+    public function countGamesByUser($userId) {
+        $pipeline = [
+            ['$match' => ['user_id' => (int)$userId]],
+            [
+                '$group' => [
+                    '_id' => '$status',
+                    'count' => ['$sum' => 1]
+                ]
+            ]
+        ];
+
+        $result = $this->collection->aggregate($pipeline);
+
+        $counts = [
+            'total' => 0,
+            'completé' => 0,
+            'en-cours' => 0
+        ];
+
+        foreach ($result as $doc) {
+            $counts['total'] += $doc['count'];
+
+            if ($doc['_id'] === 'completé') {
+                $counts['completé'] = $doc['count'];
+            } elseif ($doc['_id'] === 'en cours') {
+                $counts['en-cours'] = $doc['count'];
+            }
+        }
+
+        return $counts;
+    }
+
 }

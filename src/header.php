@@ -25,7 +25,7 @@ if(isset($message)){
                if (isset($_SESSION['user_id'])) {
                   $username = htmlspecialchars($_SESSION['user_name']);
                   echo "
-                        <a href='dashboard.php' class='text-white px-4 py-2'>$username</a>
+                        <a href='' class='text-white px-4 py-2'>$username</a>
                         <a href='logout.php' class='bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-full'>Déconnexion</a>
                   ";
                } else {

@@ -18,6 +18,7 @@ $userId = $_SESSION['user_id'];
 $db = mongo_db();
 $gamesClass = new Games($db);
 $games = $gamesClass->getGamesByUser($userId);
+$counts = $gamesClass->countGamesByUser($userId);
 
 ?>
 
@@ -62,7 +63,7 @@ $games = $gamesClass->getGamesByUser($userId);
                 </div>
                 <div>
                     <p class="text-gray-500 text-sm">Jeux Totaux</p>
-                    <h3 id="totalGames" class="text-2xl font-bold">0</h3>
+                    <h3 id="totalGames" class="text-2xl font-bold"><?= $counts['total'] ?></h3>
                 </div>
             </div>
             <div class="bg-white rounded-lg shadow p-4 flex items-center">
@@ -71,7 +72,7 @@ $games = $gamesClass->getGamesByUser($userId);
                 </div>
                 <div>
                     <p class="text-gray-500 text-sm">Completé(s)</p>
-                    <h3 id="completedGames" class="text-2xl font-bold">0</h3>
+                    <h3 id="completedGames" class="text-2xl font-bold"><?= $counts['completé'] ?></h3>
                 </div>
             </div>
             <div class="bg-white rounded-lg shadow p-4 flex items-center">
@@ -80,7 +81,7 @@ $games = $gamesClass->getGamesByUser($userId);
                 </div>
                 <div>
                     <p class="text-gray-500 text-sm">En cours</p>
-                    <h3 id="playingGames" class="text-2xl font-bold">0</h3>
+                    <h3 id="playingGames" class="text-2xl font-bold"><?= $counts['en-cours'] ?></h3>
                 </div>
             </div>
         </div>
@@ -122,7 +123,7 @@ $games = $gamesClass->getGamesByUser($userId);
         <div id="gamesContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <?php if (!empty($games)) : ?>
                 <?php foreach ($games as $game) : ?>
-                    <div class="game-card bg-white rounded-lg shadow overflow-hidden fade-in status-<?= htmlspecialchars($game['status']) ?>">
+                    <div class="game-card bg-white rounded-lg shadow overflow-hidden fade-in status-<?= htmlspecialchars(trim($game['status'])) ?>">
                         <img src="uploaded_img/<?= htmlspecialchars($game['image']) ?>" alt="<?= htmlspecialchars($game['title']) ?>" class="w-full h-40 object-cover">
                         <div class="p-4">
                             <div class="flex justify-between items-start mb-2">
@@ -133,11 +134,18 @@ $games = $gamesClass->getGamesByUser($userId);
                                 <img src="img/<?= htmlspecialchars($game['platform']) ?>.webp" class="w-6 h-6 inline-flex items-center justify-center rounded-full mr-2">
                                 <p class="text-sm text-gray-500"><?= htmlspecialchars($game['platform']) ?></p>
                             </div>
-                            <span class="px-2 py-1 rounded-full status-<?= htmlspecialchars($game['status']) ?>"><?= htmlspecialchars($game['status']) ?></span>
+                            <span class="px-2 py-1 rounded-full <?= htmlspecialchars(trim($game['status'])) ?>"><?= htmlspecialchars($game['status']) ?></span>
                         </div>
                         <div class="bg-gray-50 px-4 py-3 flex justify-between items-center text-sm">
                             <span class="text-gray-500"><i class="fas fa-clock mr-1"></i><?= htmlspecialchars($game['hours_played']) ?>h</span>
-                            <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium view-details-btn" data-id="${game.id}">
+                            <button class="text-indigo-600 hover:text-indigo-800 text-sm font-medium openDetailsBtn"
+                                data-id="<?= $game['_id'] ?>"
+                                data-title="<?= htmlspecialchars($game['title']) ?>"
+                                data-platform="<?= htmlspecialchars($game['platform']) ?>"
+                                data-status="<?= htmlspecialchars($game['status']) ?>"
+                                data-rating="<?= htmlspecialchars($game['rating']) ?>"
+                                data-hours="<?= htmlspecialchars($game['hours_played']) ?>"
+                                data-notes="<?= htmlspecialchars($game['notes']) ?>">
                                 Details <i class="fas fa-chevron-right ml-1"></i>
                             </button>
                         </div>
@@ -177,11 +185,11 @@ $games = $gamesClass->getGamesByUser($userId);
                             </div>
                         </div>
                         <div class="mb-4">
-                            <label for="title" class="block text-gray-700 mb-2">Titre du jeu*</label>
+                            <label for="title" class="block text-gray-700 mb-2">Titre du jeu *</label>
                             <input type="text" name="title" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </div>
                         <div class="mb-4">
-                            <label for="platform" class="block text-gray-700 mb-2">Platforme*</label>
+                            <label for="platform" class="block text-gray-700 mb-2">Platforme *</label>
                             <select name="platform" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 <option value="">Selectionnez Platforme</option>
                                 <option value="pc">PC</option>
@@ -191,12 +199,12 @@ $games = $gamesClass->getGamesByUser($userId);
                             </select>
                         </div>
                         <div class="mb-4">
-                            <label for="status" class="block text-gray-700 mb-2">Statut*</label>
+                            <label for="status" class="block text-gray-700 mb-2">Statut *</label>
                             <select name="status" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 <option value="">Selectionnez le Statut</option>
-                                <option value="completed">Completé</option>
-                                <option value="playing">En train de jouer</option>
-                                <option value="abandoned">Abandonné</option>
+                                <option value="completé">Completé</option>
+                                <option value="en-cours">En train de jouer</option>
+                                <option value="abandonné">Abandonné</option>
                             </select>
                         </div>
                         <div class="mb-4">
@@ -231,8 +239,8 @@ $games = $gamesClass->getGamesByUser($userId);
                 </div>
                 <div class="p-6">
                     <div class="flex items-center mb-4">
-                        <div id="detailPlatformIcon" class="platform-icon bg-gray-200 rounded-full mr-3">
-                            <i class="fas fa-question text-gray-600"></i>
+                        <div id="detailPlatformIcon" class="platform-icon rounded-full mr-3">
+                            <img src="img/'detailPlatform'" class="fas fa-question text-gray-600"></img>
                         </div>
                         <div> 
                             <p id="detailPlatform" class="text-gray-600">Platforme</p>
@@ -251,15 +259,19 @@ $games = $gamesClass->getGamesByUser($userId);
                     </div>
                     <div class="mb-4">
                         <p class="text-gray-500 text-sm mb-1">Commentaire</p>
-                        <p id="detailNotes" class="text-gray-700 bg-gray-50 p-3 rounded">Aucunes commentaire ajouté</p>
+                        <p id="detailNotes" class="text-gray-700 bg-gray-50 p-3 rounded">-</p>
                     </div>
                     <div class="flex justify-between pt-4 border-t">
                         <button id="editGameBtn" class="text-indigo-600 hover:text-indigo-800 flex items-center">
                             <i class="fas fa-edit mr-1"></i> Editer
                         </button>
-                        <button id="deleteGameBtn" class="text-red-600 hover:text-red-800 flex items-center">
-                            <i class="fas fa-trash-alt mr-1"></i> Supprimer
-                        </button>
+                        <form id="deleteGameForm" action="delete_game.php" method="POST">
+                            <input type="hidden" name="game_id" id="deleteGameId" value="">
+                            <button type="submit" class="text-red-600 hover:text-red-800"
+                                onclick="return confirm('Voulez-vous vraiment supprimer ce jeu ?');">
+                                <i class="fas fa-trash-alt"></i> Supprimer
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -310,20 +322,19 @@ $games = $gamesClass->getGamesByUser($userId);
         const closeDetailsBtn = document.getElementById("closeDetailsModalBtn");
 
         // Quand on clique sur un bouton "Détails"
-        document.querySelectorAll(".view-details-btn").forEach(button => {
-            button.addEventListener("click", () => {
-                const gameId = button.getAttribute("data-id");
-                
-                // Exemple basique pour affichage statique :
-                document.getElementById("detailGameTitle").textContent = "<?= htmlspecialchars($game['title']) ?>";
-                document.getElementById("detailPlatform").textContent = "<?= htmlspecialchars($game['platform']) ?>";
-                document.getElementById("detailStatus").textContent = "<?= htmlspecialchars($game['status']) ?>";
-                document.getElementById("detailRating").textContent = "<?= htmlspecialchars($game['rating']) ?>";
-                document.getElementById("detailHours").textContent = "<?= htmlspecialchars($game['hours_played']) ?>";
-                document.getElementById("detailNotes").textContent = "Très bon jeu.";
+        document.querySelectorAll(".openDetailsBtn").forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('detailGameTitle').textContent = btn.dataset.title;
+                document.getElementById('detailPlatform').textContent = btn.dataset.platform;
+                document.getElementById('detailStatus').textContent = btn.dataset.status;
+                document.getElementById('detailRating').textContent = btn.dataset.rating || '-';
+                document.getElementById('detailHours').textContent = btn.dataset.hours || '-';
+                document.getElementById('detailNotes').textContent = btn.dataset.notes || 'Aucun commentaire ajouté';
 
-                // Ouvrir le modal
-                detailsModal.classList.remove("hidden");
+                // Injection de l’ID du jeu dans le form de suppression
+                document.getElementById('deleteGameId').value = btn.dataset.id;
+
+                document.getElementById('gameDetailsModal').classList.remove('hidden');
             });
         });
 

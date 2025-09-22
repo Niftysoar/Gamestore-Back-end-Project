@@ -31,22 +31,43 @@ body {
 .game-card {
     transition: all 0.3s ease;
 }
+
 .game-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
-.status-completed {
-    border-left: 4px solid #10B981;
+
+.status-completé {
+    border-left: 4px solid #16a34a;
 }
-.status-playing {
-    border-left: 4px solid #F59E0B;
+
+.completé {
+    background-color: #dcfce7;
+    color: #16a34a;
 }
-.status-abandoned {
-    border-left: 4px solid #EF4444;
+
+.status-encours {
+    border-left: 4px solid #ca8a04;
 }
+
+.encours {
+    background-color: #fef9c3;
+    color: #ca8a04;
+}
+
+.status-abandonné {
+    border-left: 4px solid #e7000b;
+}
+
+.abandonné {
+    background-color: #ffe2e2;
+    color: #e7000b;
+}
+
 .fade-in {
     animation: fadeIn 0.5s;
 }
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
